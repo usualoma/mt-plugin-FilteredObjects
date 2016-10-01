@@ -1,0 +1,34 @@
+<mt:SetVarBlock name="jq_js_include" append="1">
+(function($, orig) {
+  "use strict";
+
+  var renderFilterIdentifier = function() {
+    filters.forEach(function(f, i) {
+      if (! f.filtered_objects_identifier) {
+        return;
+      }
+      var $li = $('#user-filters a[href="#' + i + '"]').parent();
+      var $label = $("<span>")
+        .text("<mt:Var name="filtere_identifier_label" />: " + f.filtered_objects_identifier);
+      $li.find("a")
+        .first()
+        .after($label);
+      $li.find("a.rename-link")
+        .on("click", function() {
+          $label.hide()
+          $li.find(".tool-link.cancel").on("click.filtered_objects", function() {
+            $label.show();
+            $(this).off("click.filtered_objects");
+          });
+        });
+      $li.find("a.delete-link").remove();
+    });
+  };
+  renderFilterIdentifier();
+
+  renderFilterList = function() {
+    orig();
+    renderFilterIdentifier();
+  };
+})(jQuery, renderFilterList);
+</mt:SetVarBlock>

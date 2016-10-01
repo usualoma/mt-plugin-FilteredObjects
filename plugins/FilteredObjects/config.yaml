@@ -1,0 +1,63 @@
+id: FilteredObjects
+name: FilteredObjects
+version: 0.0.1
+
+description: <__trans phrase="Apply the filter to the MT tag.">
+author_name: Taku AMANO
+author_link: http://blog.taaas.jp/
+plugin_link: http://blog.taaas.jp/mt/filtered-objects/
+
+schema_version: 0.01
+object_types:
+  filter:
+    filtered_objects_identifier: string(255) indexed
+
+callbacks:
+  MT::App::CMS::template_param.list_common: $FilteredObjects::MT::Plugin::FilteredObjects::template_param_list_common
+  MT::App::CMS::init_app: $FilteredObjects::MT::Plugin::FilteredObjects::cms_init_app
+
+l10n_lexicon:
+  ja:
+    Apply the filter to the MT tag.: "リスティングスクリーンのフィルターをMTタグに適用します。"
+    Filter Identifier: "識別子"
+    The identifier is duplicated.: "識別子が重複しています。"
+    Filter Not Found: "フィルターが見つかりませんでした"
+
+tags:
+  block:
+    FilteredEntries: $FilteredObjects::MT::Plugin::FilteredObjects::_hdlr_entries
+    FilteredPages: $FilteredObjects::MT::Plugin::FilteredObjects::_hdlr_entries
+
+list_properties:
+  entry:
+    filtered_objects_blog_id:
+      order: 50
+      label: Blog ID
+      auto: 1
+      id: blog_id
+      display: none
+      filter_editable: 1
+  page:
+    filtered_objects_blog_id:
+      order: 50
+      label: Blog ID
+      auto: 1
+      id: blog_id
+      display: none
+      filter_editable: 1
+
+applications:
+  data_api:
+    endpoints:
+      - id: get_filtered_objects_entries
+        route: /filtered-objects/entries
+        verb: GET
+        version: 3
+        requires_login: 0
+        handler: $FilteredObjects::MT::Plugin::FilteredObjects::get_filtered_objects_entries
+      - id: get_filtered_objects_pages
+        route: /filtered-objects/pages
+        verb: GET
+        version: 3
+        requires_login: 0
+        handler: $FilteredObjects::MT::Plugin::FilteredObjects::get_filtered_objects_entries
