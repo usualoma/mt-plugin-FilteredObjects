@@ -45,6 +45,14 @@ list_properties:
       id: blog_id
       display: none
       filter_editable: 1
+  filter:
+    filtered_objects_identifier:
+      order: 250
+      base: __virtual.string
+      label: Filter Identifier
+      col: filtered_objects_identifier
+      auto: 1
+      filter_editable: 1
 
 applications:
   data_api:
