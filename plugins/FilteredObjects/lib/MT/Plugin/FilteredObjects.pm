@@ -89,6 +89,30 @@ sub cms_init_app {
     };
 }
 
+sub cms_init_request {
+    my ($eh, $app) = @_;
+
+    my $props = MT->component('CustomFieldsListing')->registry('list_properties') || {};
+    for my $type (keys %$props) {
+        for my $p (values %{$props->{$type}}) {
+            next unless ref $p eq 'HASH';
+
+            if (($p->{col_class} || '') eq 'date' && ref $p->{filter_tmpl}) {
+                $p->{filter_tmpl} = sub {
+                    my $prop     = shift;
+                    my $label    = '<mt:var name="label">';
+                    my $tmpl     = 'filter_form_future_date';
+                    my $opts     = '<mt:var name="future_date_filter_options">';
+                    my $contents = '<mt:var name="future_date_filter_contents">';
+                    return MT->translate(
+                        '<mt:var name="[_1]"> [_2] [_3] [_4]',
+                        $tmpl, $label, $opts, $contents );
+                };
+            }
+        }
+    }
+}
+
 sub pack_and {
     my ($filters) = @_;
 

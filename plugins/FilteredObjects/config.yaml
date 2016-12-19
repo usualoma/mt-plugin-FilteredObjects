@@ -1,6 +1,6 @@
 id: FilteredObjects
 name: FilteredObjects
-version: 0.0.1
+version: 0.0.3
 
 description: <__trans phrase="Apply the filter to the MT tag.">
 author_name: Taku AMANO
@@ -15,6 +15,9 @@ object_types:
 callbacks:
   MT::App::CMS::template_param.list_common: $FilteredObjects::MT::Plugin::FilteredObjects::template_param_list_common
   MT::App::CMS::init_app: $FilteredObjects::MT::Plugin::FilteredObjects::cms_init_app
+  MT::App::CMS::init_request:
+    priority: 10
+    handler: $FilteredObjects::MT::Plugin::FilteredObjects::cms_init_request
 
 l10n_lexicon:
   ja:
