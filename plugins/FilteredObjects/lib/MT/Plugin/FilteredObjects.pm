@@ -108,6 +108,49 @@ sub cms_init_request {
                         '<mt:var name="[_1]"> [_2] [_3] [_4]',
                         $tmpl, $label, $opts, $contents );
                 };
+                my $original_terms = $p->{terms};
+                $p->{terms} = sub {
+                    my ($prop, $args, $db_terms, $db_args) = @_;
+
+                    my $blog = $prop->field->blog_id ? MT->model('blog')->load($prop->field->blog_id) : undef;
+                    local $MT::mt_inst;
+                    {
+                        no warnings 'once';
+                        $MT::mt_inst = MT::Plugin::FilteredObjects::PseudoApp->new(
+                            blog => $blog,
+                        );
+                    }
+                    my $original_field = $prop->{field};
+                    local $prop->{field} = $original_field->clone;
+
+                    my $option = $args->{option};
+                    if ($option =~ m/\A(future|past)\z/) {
+                        require MT::Util;
+                        my $now = MT::Util::epoch2ts($blog, time());
+
+                        $prop->field->type('text');
+                        $args = dclone($args);
+
+                        if ( 'future' eq $option ) {
+                            $args->{option} = 'greater_equal';
+
+                            if ($original_field->options eq 'date') {
+                                $now =~ s/\d{6}\z/000000/;
+                            }
+                            $args->{value} = $now;
+                        }
+                        elsif ( 'past' eq $option ) {
+                            $args->{option} = 'less_equal';
+
+                            if ($original_field->options eq 'date') {
+                                $now =~ s/\d{6}\z/235959/;
+                            }
+                            $args->{value} = $now;
+                        }
+                    }
+
+                    $original_terms->($prop, $args, $db_terms, $db_args);
+                };
             }
         }
     }
@@ -480,6 +523,7 @@ sub param {
     }
 }
 
+sub blog          { shift->{blog}; }
 sub component     { shift->{app}->component(@_); }
 sub registry      { shift->{app}->registry(@_); }
 sub model         { shift->{app}->model(@_); }
