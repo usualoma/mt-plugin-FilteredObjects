@@ -1,6 +1,6 @@
 id: FilteredObjects
 name: FilteredObjects
-version: 0.0.4
+version: 0.0.5
 
 description: <__trans phrase="Apply the filter to the MT tag.">
 author_name: Taku AMANO

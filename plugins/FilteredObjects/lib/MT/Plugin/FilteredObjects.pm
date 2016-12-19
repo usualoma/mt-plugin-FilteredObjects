@@ -92,7 +92,9 @@ sub cms_init_app {
 sub cms_init_request {
     my ($eh, $app) = @_;
 
-    my $props = MT->component('CustomFieldsListing')->registry('list_properties') || {};
+    my $custom_fields_listing = MT->component('CustomFieldsListing')
+        or return;
+    my $props = $custom_fields_listing->registry('list_properties') || {};
     for my $type (keys %$props) {
         for my $p (values %{$props->{$type}}) {
             next unless ref $p eq 'HASH';
